@@ -38,6 +38,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = UniJoint)
 	bool	SetOffset(bool vActive);
 
+	//Get Toggle Open/Closed, can be pure as its a getter
+	UFUNCTION(BlueprintCallable, Category = UniJoint)
+	bool	SetOffsetDeferred(bool vActive);
+
 
 	//Private Variables/Functions
 private:
@@ -47,6 +51,8 @@ private:
 	FRotator    InitialAngle;	//Initial Door angle
 	FRotator    FromAngle;		//Angle when started
 	FRotator    ToAngle;		//Angle when complete
+
+	bool    isOffsetFlagDeferred; //Do we have a De?
 
 private: //Code declaration
 	void    Animate(float DeltaTime); //Animate door on Tick

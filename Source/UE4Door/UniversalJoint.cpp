@@ -56,18 +56,32 @@ bool UUniversalJoint::SetOffset(bool vActive)
 	return  true; //Success
 }
 
+bool UUniversalJoint::SetOffsetDeferred(bool vActive)
+{
+	isOffsetFlagDeferred = vActive; //Set Deferred update flag
+	return	!isBusy; //If we were not busy it will  get done on next tick
+}
+
 void UUniversalJoint::Animate(float DeltaTime)
 {
-	if (!isBusy) return; //Door not animating
-
-	FRotator CurrentRotation = FMath::Lerp(FromAngle, ToAngle, CurrentLERP); //Get Current rotation
-	SetRelativeRotation(CurrentRotation, false, 0, ETeleportType::None);
-	CurrentLERP += DeltaTime;
-	if (CurrentLERP >= 1.0)
+	if (isBusy)
 	{
-		SetRelativeRotation(ToAngle, false, 0, ETeleportType::None);
-		isOffsetFlag = !isOffsetFlag;	//Flip Flag
-		isBusy = false;	//Done with movement
+		FRotator CurrentRotation = FMath::Lerp(FromAngle, ToAngle, CurrentLERP); //Get Current rotation
+		SetRelativeRotation(CurrentRotation, false, 0, ETeleportType::None);
+		CurrentLERP += DeltaTime;
+		if (CurrentLERP >= 1.0)
+		{
+			SetRelativeRotation(ToAngle, false, 0, ETeleportType::None);
+			isOffsetFlag = !isOffsetFlag;	//Flip Flag
+			isBusy = false;	//Done with movement
+		}
+	}
+	else //Handle deferred offset
+	{
+		if (isOffsetFlagDeferred != isOffsetFlag)
+		{
+			SetOffset(isOffsetFlagDeferred);
+		}
 	}
 }
 
